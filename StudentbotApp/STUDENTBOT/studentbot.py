@@ -161,13 +161,13 @@ if st.session_state.logged_in:
             st.success("Profile updated successfully.")
 
     # Chat Interface
-    st.title("Medical Assistant")
+    st.title("StudentBot  Assistant App")
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
     # Chat Input
-    if question := st.chat_input(placeholder="Ask a medical question"):
+    if question := st.chat_input(placeholder="Ask a  question "):
         st.session_state.chat_history.append({"role": "user", "content": question})
 
         # Display user's message
@@ -177,7 +177,7 @@ if st.session_state.logged_in:
         # Create chat completion request
         start = time.process_time()
         chat_completion = client.chat.completions.create(
-            messages=[{"role": "system", "content": "You are a medical assistant. You can only answer questions related to diseases, their causes, drugs, and recommendations."}] + st.session_state.chat_history,
+            messages=[{"role": "system", "content": "You are a student assistant. You can only answer questions related to academic, the Registration, How apply a tut, and modules in all department."}] + st.session_state.chat_history,
             model="llama3-8b-8192",
             temperature=0.5,
             max_tokens=1024,
@@ -190,7 +190,7 @@ if st.session_state.logged_in:
         answer = chat_completion.choices[0].message.content
 
         # Display the response only if it meets medical criteria
-        if any(term in answer.lower() for term in ['disease', 'cause', 'drug', 'recommendation']):
+        if any(term in answer.lower() for term in ['academic', 'cause', 'drug', 'recommendation']):
             st.session_state.chat_history.append({"role": "assistant", "content": answer})
 
             # Display assistant's response
@@ -211,7 +211,7 @@ if st.session_state.logged_in:
         st.success("Logged out successfully.")
 
 else:
-    st.title("Welcome to the Medical Assistant")
+    st.title("Welcome to the Student Bot App")
     st.write("Please log in to interact with the chatbot.")
-    st.image("studentbot.png", use_column_width=True)
+
     st.write("The mission of this app is to provide users with a secure and personalized experience to access advanced AI-driven assistance for medical inquiries.")
