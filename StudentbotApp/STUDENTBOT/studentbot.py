@@ -200,17 +200,55 @@ if st.session_state.logged_in:
             st.write("The response does not match the medical criteria.")
 
     # Logout
-    if st.sidebar.button("Logout"):
-        st.session_state.logged_in = False
-        st.session_state.username = None
-        st.session_state.name = ''
-        st.session_state.surname = ''
-        st.session_state.email = ''
-        st.session_state.chat_history = []
-        st.session_state.bookmarked_messages = []
-        st.success("Logged out successfully.")
+  # CSS styles
+st.markdown(
+    """
+    <style>
+    body {
+        background-color: #f4f4f9;
+        font-family: 'Arial', sans-serif;
+    }
+    h1 {
+        color: #2a7cba;
+        text-align: center;
+        font-size: 2.5rem;
+    }
+    p {
+        color: #555555;
+        font-size: 1.1rem;
+        line-height: 1.5;
+    }
+    .stButton > button {
+        background-color: #2a7cba;
+        color: white;
+        border-radius: 5px;
+        padding: 0.5rem 1.5rem;
+        border: none;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+    .stButton > button:hover {
+        background-color: #1d5d8f;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
+# App logic
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if st.sidebar.button("Logout"):
+    st.session_state.logged_in = False
+    st.session_state.username = None
+    st.session_state.name = ''
+    st.session_state.surname = ''
+    st.session_state.email = ''
+    st.session_state.chat_history = []
+    st.session_state.bookmarked_messages = []
+    st.success("Logged out successfully.")
 else:
-    st.title("Welcome to the Student Bot App")
-    st.write("Please log in to interact with the chatbot.")
+    st.title("Welcome To The Student Bot App")
+    st.write("Please log in to interact student bot with the chatbot.")
     st.write("The mission of this app is to provide users with a secure and personalized experience to access advanced AI-driven assistance for medical inquiries.")
