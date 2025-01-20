@@ -165,7 +165,7 @@ if st.session_state.logged_in:
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
-  image_path=D:\Downloads\student-robot-pointer-isolated-white-38937679 .png
+ 
     # Chat Input
     if question := st.chat_input(placeholder="Ask a  question "):
         st.session_state.chat_history.append({"role": "user", "content": question})
@@ -213,5 +213,4 @@ if st.session_state.logged_in:
 else:
     st.title("Welcome to the Student Bot App")
     st.write("Please log in to interact with the chatbot.")
-     st.image(image_path, caption='Student Academic Achievement', use_column_width=True)
     st.write("The mission of this app is to provide users with a secure and personalized experience to access advanced AI-driven assistance for medical inquiries.")
