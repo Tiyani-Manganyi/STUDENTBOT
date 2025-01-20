@@ -83,7 +83,7 @@ def create_users_file():
             writer.writerow(['username', 'password', 'name', 'surname', 'email'])
 
 # Set page configuration
-st.set_page_config(page_title="Medical Assistant", page_icon="medical.png")
+st.set_page_config(page_title="Medical Assistant", page_icon="studentbot.png")
 
 # Create users file if it doesn't exist
 create_users_file()
@@ -213,5 +213,5 @@ if st.session_state.logged_in:
 else:
     st.title("Welcome to the Medical Assistant")
     st.write("Please log in to interact with the chatbot.")
-    st.image("medical.png", use_column_width=True)
+    st.image("studentbot.png", use_column_width=True)
     st.write("The mission of this app is to provide users with a secure and personalized experience to access advanced AI-driven assistance for medical inquiries.")
