@@ -200,7 +200,9 @@ if st.session_state.logged_in:
             st.write("The response does not match the medical criteria.")
 
     # Logout
-  # CSS styles
+import streamlit as st
+
+# CSS styles
 st.markdown(
     """
     <style>
@@ -212,11 +214,15 @@ st.markdown(
         color: #2a7cba;
         text-align: center;
         font-size: 2.5rem;
+        margin-bottom: 1rem;
     }
-    p {
+    .custom-paragraph {
         color: #555555;
         font-size: 1.1rem;
-        line-height: 1.5;
+        line-height: 1.6;
+        margin: 0 auto;
+        max-width: 600px;
+        text-align: center;
     }
     .stButton > button {
         background-color: #2a7cba;
@@ -249,6 +255,10 @@ if st.sidebar.button("Logout"):
     st.session_state.bookmarked_messages = []
     st.success("Logged out successfully.")
 else:
-    st.title("Welcome To The Student Bot App")
-    st.write("Please log in to interact student bot with the chatbot.")
-    st.write("The mission of this app is to provide users with a secure and personalized experience to access advanced AI-driven assistance for medical inquiries.")
+    st.markdown("<h1>Welcome to the Student Bot App</h1>", unsafe_allow_html=True)
+    st.markdown(
+        "<p class='custom-paragraph'>Please log in to interact with the chatbot. "
+        "The mission of this app is to provide users with a secure and personalized experience "
+        "to access advanced AI-driven assistance for medical inquiries.</p>",
+        unsafe_allow_html=True,
+    )
