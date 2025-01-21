@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 import os
 import hashlib
 import csv
@@ -201,6 +202,33 @@ if st.session_state.logged_in:
 
     # Logout
 import streamlit as st
+
+def load_dashboard():
+    st.title("Admin Dashboard")
+
+    # Load users data
+    if os.path.exists(USERS_FILE):
+        data = pd.read_csv(USERS_FILE)
+
+        # Display key metrics
+        st.subheader("Key Metrics")
+        total_users = data.shape[0]
+        st.metric("Total Registered Users", total_users)
+
+        # Show user details
+        st.subheader("User Details")
+        st.dataframe(data)
+
+        # Display chat history
+        st.subheader("Chat Logs")
+        if "chat_history" in st.session_state and st.session_state.chat_history:
+            for i, message in enumerate(st.session_state.chat_history):
+                role = message["role"].capitalize()
+                st.write(f"{i+1}. **{role}:** {message['content']}")
+        else:
+            st.write("No chat history available.")
+    else:
+        st.warning("No users registered yet.")
 
 # CSS styles
 st.markdown(
