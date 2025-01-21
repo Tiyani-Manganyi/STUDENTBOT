@@ -250,6 +250,39 @@ if st.session_state.logged_in:
         unsafe_allow_html=True
     )
 
+    auth_choice = st.radio("Choose an option", ["Login", "Sign Up"], index=0, horizontal=True)
+
+    if auth_choice == "Login":
+        st.markdown('<h2>Login</h2>', unsafe_allow_html=True)
+        log_username = st.text_input("Username", key="log_username", placeholder="Enter your username")
+        log_password = st.text_input("Password", type="password", key="log_password", placeholder="Enter your password")
+        if st.button("Login"):
+            if login_user(log_username, log_password):
+                st.session_state.logged_in = True
+                st.session_state.username = log_username
+                user_info = get_user_info(log_username)
+                st.session_state.name = user_info['name'].capitalize()
+                st.session_state.surname = user_info['surname'].capitalize()
+                st.session_state.email = user_info['email']
+                st.success("Logged in successfully.")
+            else:
+                st.error("Invalid username or password.")
+
+    elif auth_choice == "Sign Up":
+        st.markdown('<h2>Sign Up</h2>', unsafe_allow_html=True)
+        reg_username = st.text_input("Username", key="reg_username", placeholder="Choose a username")
+        reg_password = st.text_input("Password", type="password", key="reg_password", placeholder="Choose a password")
+        reg_name = st.text_input("First Name", key="reg_name", placeholder="Enter your first name")
+        reg_surname = st.text_input("Last Name", key="reg_surname", placeholder="Enter your last name")
+        reg_email = st.text_input("Email", key="reg_email", placeholder="Enter your email")
+        if st.button("Register"):
+            if not user_exists(reg_username):
+                register_user(reg_username, reg_password, reg_name, reg_surname, reg_email)
+                st.success("User registered successfully.")
+            else:
+                st.error("Username already exists.")
+
+    st.markdown('</div></div>', unsafe_allow_html=True)
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = None
