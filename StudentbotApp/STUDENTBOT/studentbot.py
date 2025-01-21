@@ -1,13 +1,13 @@
 import streamlit as st
 import pandas as pd
 import os
-import hashlib
+import bcrypt
 import csv
 import time
 from groq import Groq
 
-# Define API key directly
-GROQ_API_KEY = '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'
+# Define API key directly (replace with environment variable in production)
+GROQ_API_KEY = 'your_groq_api_key_here'  # Replace with your API key or use os.getenv("GROQ_API_KEY")
 
 # Initialize Groq client
 client = Groq(api_key=GROQ_API_KEY)
@@ -15,8 +15,15 @@ client = Groq(api_key=GROQ_API_KEY)
 USERS_FILE = 'users.csv'
 
 def hash_password(password):
-    """Hash the password using SHA-256."""
-    return hashlib.sha256(password.encode()).hexdigest()
+    """Hash the password using bcrypt."""
+    # Generate a salt and hash the password with it
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode(), salt)
+    return hashed_password
+
+def check_password(password, hashed_password):
+    """Validate the password by comparing the hashed password."""
+    return bcrypt.checkpw(password.encode(), hashed_password)
 
 def register_user(username, password, name, surname, email):
     """Register a new user by appending their details to the CSV file."""
@@ -27,11 +34,10 @@ def register_user(username, password, name, surname, email):
 
 def login_user(username, password):
     """Authenticate a user by checking username and password."""
-    hashed_password = hash_password(password)
     with open(USERS_FILE, mode='r') as file:
         reader = csv.reader(file)
         for row in reader:
-            if row[0] == username and row[1] == hashed_password:
+            if row[0] == username and check_password(password, row[1].encode()):
                 return True
     return False
 
@@ -162,13 +168,13 @@ if st.session_state.logged_in:
             st.success("Profile updated successfully.")
   
     # Chat Interface
-    st.title("StudentBot  Assistant App")
+    st.title("StudentBot Assistant App")
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
  
     # Chat Input
-    if question := st.chat_input(placeholder="Ask a  question "):
+    if question := st.chat_input(placeholder="Ask a question "):
         st.session_state.chat_history.append({"role": "user", "content": question})
 
         # Display user's message
