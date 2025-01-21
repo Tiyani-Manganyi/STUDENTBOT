@@ -1,70 +1,82 @@
-import streamlit as st
-import pandas as pd
 import os
+import hashlib
+import csv
 
-# Ensure the users file exists
 USERS_FILE = 'users.csv'
-if not os.path.exists(USERS_FILE):
-    with open(USERS_FILE, mode='w', newline='') as file:
+
+def hash_password(password):
+    """Hash the password using SHA-256."""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def register_user(username, password, name, surname, email):
+    """Register a new user."""
+    hashed_password = hash_password(password)
+    with open(USERS_FILE, mode='a', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(['username', 'password', 'name', 'surname', 'email'])
+        writer.writerow([username, hashed_password, name, surname, email])
 
-# Set up dashboard layout
-st.set_page_config(page_title="Admin Dashboard", page_icon="📊", layout="wide")
-st.title("Admin Dashboard")
+def login_user(username, password):
+    """Authenticate a user."""
+    hashed_password = hash_password(password)
+    if not os.path.exists(USERS_FILE):
+        return False
+    with open(USERS_FILE, mode='r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == username and row[1] == hashed_password:
+                return True
+    return False
 
-# Tabs for dashboard features
-analytics_tab, chat_tab, users_tab = st.tabs(["User Analytics", "Chat Summary", "Manage Users"])
+def user_exists(username):
+    """Check if a user exists."""
+    if not os.path.exists(USERS_FILE):
+        return False
+    with open(USERS_FILE, mode='r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == username:
+                return True
+    return False
 
-# User Analytics Tab
-with analytics_tab:
-    st.header("User Analytics")
-    
-    # Load user data
-    if os.path.exists(USERS_FILE):
-        user_data = pd.read_csv(USERS_FILE)
+def get_user_info(username):
+    """Retrieve user information."""
+    if not os.path.exists(USERS_FILE):
+        return None
+    with open(USERS_FILE, mode='r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == username:
+                return {
+                    'name': row[2],
+                    'surname': row[3],
+                    'email': row[4]
+                }
+    return None
 
-        # Display basic stats
-        st.subheader("User Statistics")
-        st.metric("Total Users", len(user_data))
-        st.metric("Unique Emails", user_data['email'].nunique())
-        
-        # Display user data table
-        st.subheader("Registered Users")
-        st.dataframe(user_data)
-    else:
-        st.error("No user data available.")
+def update_user_info(username, new_name, new_surname, new_email, new_password):
+    """Update user information."""
+    if not os.path.exists(USERS_FILE):
+        return False
+    updated = False
+    rows = []
+    with open(USERS_FILE, mode='r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == username:
+                hashed_password = hash_password(new_password) if new_password else row[1]
+                rows.append([username, hashed_password, new_name, new_surname, new_email])
+                updated = True
+            else:
+                rows.append(row)
+    if updated:
+        with open(USERS_FILE, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerows(rows)
+    return updated
 
-# Chat Summary Tab
-with chat_tab:
-    st.header("Chat Summary")
-
-    if 'chat_history' in st.session_state and st.session_state['chat_history']:
-        st.subheader("Recent Conversations")
-        for i, chat in enumerate(st.session_state['chat_history'][-10:]):
-            with st.expander(f"Message {i + 1} ({chat['role'].capitalize()}):"):
-                st.write(chat['content'])
-    else:
-        st.info("No chat history available.")
-
-# Manage Users Tab
-with users_tab:
-    st.header("Manage Users")
-
-    # Load user data
-    if os.path.exists(USERS_FILE):
-        user_data = pd.read_csv(USERS_FILE)
-
-        # Display and allow admin to delete users
-        selected_user = st.selectbox("Select a User to Delete", user_data['username'])
-
-        if st.button("Delete User"):
-            user_data = user_data[user_data['username'] != selected_user]
-            user_data.to_csv(USERS_FILE, index=False)
-            st.success(f"User '{selected_user}' deleted successfully.")
-    else:
-        st.error("No user data available.")
-
-# Footer
-st.markdown("---")
-st.caption("Admin Dashboard - Built with Streamlit")
+def create_users_file():
+    """Create the users file if it doesn't exist."""
+    if not os.path.exists(USERS_FILE):
+        with open(USERS_FILE, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['username', 'password', 'name', 'surname', 'email'])
