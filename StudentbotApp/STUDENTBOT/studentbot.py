@@ -206,6 +206,11 @@ if st.session_state.logged_in:
         st.write(f"You have uploaded: {uploaded_file.name}")
         # Perform actions with the uploaded file if necessary
 
+    # Clear Charts Button
+    if st.button("Clear All Charts"):
+        st.session_state.chat_history = []
+        st.success("All charts have been cleared.")
+
     # Logout
     st.markdown(
         """
@@ -245,6 +250,7 @@ if st.session_state.logged_in:
         unsafe_allow_html=True
     )
 
+  
     if st.sidebar.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = None
